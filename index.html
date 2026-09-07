@@ -35,6 +35,15 @@
     text-align:center;
   }
   .logo{max-width:110px;height:auto;margin:0 auto 18px;display:block}
+  .imagen{
+    display:block;
+    width:100%;
+    aspect-ratio:16/10;
+    object-fit:cover;
+    margin:0 0 20px;
+    -webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%, #000 55%, transparent 100%);
+    mask-image:radial-gradient(ellipse 100% 100% at 50% 50%, #000 55%, transparent 100%);
+  }
   .centro{
     font-size:12px;
     letter-spacing:.09em;
@@ -99,6 +108,7 @@
 
 <main class="tarjeta">
   <img id="logo" class="logo" alt="" hidden>
+  <img id="imagenPrincipal" class="imagen" alt="" hidden>
   <p class="centro">CEIP Manuel Siurot</p>
   <h1 id="titulo">Audioguía</h1>
 
@@ -118,6 +128,7 @@
 (function(){
   var p       = new URLSearchParams(location.search);
   var archivo = p.get('a') || p.get('audio') || '';
+  var imagenP = p.get('img') || p.get('imagen') || '';
   var titulo  = p.get('t') || p.get('titulo') || '';
   var logoUrl = p.get('logo') || 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/main/Web_Siurot/Logo_web.png';
 
@@ -126,6 +137,23 @@
   var playTxt  = document.getElementById('playTexto');
   var aviso    = document.getElementById('aviso');
   var logo     = document.getElementById('logo');
+  var imagen   = document.getElementById('imagenPrincipal');
+
+  // Resuelve nombres sueltos ("sala1") frente a URLs completas o con extensión.
+  function resolver(nombre, extension){
+    if (!nombre) return '';
+    if (/^https?:\/\//i.test(nombre)) return nombre;
+    return /\.[a-z0-9]+$/i.test(nombre) ? nombre : nombre + '.' + extension;
+  }
+
+  var imagenSrc = resolver(imagenP, 'jpg');
+  if (imagenSrc) {
+    imagen.onload  = function(){ imagen.hidden = false; };
+    imagen.onerror = function(){ imagen.remove(); };
+    imagen.src = imagenSrc;
+  } else {
+    imagen.remove();
+  }
 
   if (logoUrl) {
     logo.onload  = function(){ logo.hidden = false; };
@@ -148,12 +176,7 @@
     return;
   }
 
-  // Si es una URL completa se usa tal cual; si no, se resuelve junto a esta página.
-  var src = /^https?:\/\//i.test(archivo)
-    ? archivo
-    : (/\.[a-z0-9]+$/i.test(archivo) ? archivo : archivo + '.mp3');
-
-  audio.src = src;
+  audio.src = resolver(archivo, 'mp3');
 
   audio.addEventListener('error', function(){
     error('No se ha podido cargar el audio. Comprueba tu conexión a internet e inténtalo de nuevo.');

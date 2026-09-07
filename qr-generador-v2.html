@@ -144,11 +144,15 @@
         <input type="text" id="titulo" placeholder="Escribe el título del audio">
       </div>
       <div class="campo">
-        <label for="archivo">Nombre del archivo MP3</label>
-        <input type="text" id="archivo" placeholder="Siurot_QR.mp3">
+        <label for="archivo">Audio: nombre de archivo o URL completa</label>
+        <input type="text" id="archivo" placeholder="Siurot_QR.mp3 o https://raw.githubusercontent.com/...">
       </div>
     </div>
-    <p class="pista">Solo el nombre del archivo, tal como está en el repositorio. Cuanto más corto, más fácil de escanear será el QR.</p>
+    <div class="campo" style="margin-top:12px">
+      <label for="imagen">Imagen: nombre de archivo o URL completa (opcional)</label>
+      <input type="text" id="imagen" placeholder="sala1.jpg o https://raw.githubusercontent.com/...">
+    </div>
+    <p class="pista">Si escribes solo el nombre del archivo, debe estar en el mismo repositorio que el reproductor (QR más corto). Si pegas la URL raw completa, puede estar en cualquier repositorio.</p>
     <button class="ancho" id="btnAnadir">Añadir y generar QR</button>
   </fieldset>
 
@@ -172,6 +176,7 @@
 
   var $titulo  = document.getElementById('titulo');
   var $archivo = document.getElementById('archivo');
+  var $imagen  = document.getElementById('imagen');
   var $base    = document.getElementById('base');
   var $lista   = document.getElementById('lista');
   var $acciones= document.getElementById('acciones');
@@ -194,7 +199,9 @@
   }
 
   function enlaceDe(a){
-    var q = new URLSearchParams({ a: a.archivo, t: a.titulo });
+    var datos = { a: a.archivo, t: a.titulo };
+    if (a.imagen) datos.img = a.imagen;
+    var q = new URLSearchParams(datos);
     return baseLimpia() + '?' + q.toString();
   }
 
@@ -207,14 +214,16 @@
   function anadir(){
     var titulo  = $titulo.value.trim();
     var archivo = $archivo.value.trim();
+    var imagen  = $imagen.value.trim();
 
     if (!baseLimpia()) { avisar('Falta la dirección de la audioguía.', 'mal'); $base.focus(); return; }
     if (!titulo)  { avisar('Escribe el título del audio.', 'mal'); $titulo.focus(); return; }
     if (!archivo) { avisar('Escribe el nombre del archivo MP3.', 'mal'); $archivo.focus(); return; }
 
-    audios.push({ titulo: titulo, archivo: archivo });
+    audios.push({ titulo: titulo, archivo: archivo, imagen: imagen });
     $titulo.value = '';
     $archivo.value = '';
+    $imagen.value = '';
     $titulo.focus();
     pintar();
     avisar('QR generado: ' + titulo, 'ok');
