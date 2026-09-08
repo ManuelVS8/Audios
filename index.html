@@ -55,8 +55,7 @@
   .imagen{
     display:block;
     width:100%;
-    aspect-ratio:16/10;
-    object-fit:cover;
+    height:auto;
     margin:0 0 20px;
     -webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%, #000 55%, transparent 100%);
     mask-image:radial-gradient(ellipse 100% 100% at 50% 50%, #000 55%, transparent 100%);
@@ -105,6 +104,15 @@
   .aviso.error{display:block;background:#fdecea;color:#b3261e}
   .aviso a{color:inherit}
 
+  .plano{
+    display:block;
+    width:100%;
+    height:auto;
+    margin-top:20px;
+    border-radius:12px;
+    border:1px solid var(--linea);
+  }
+
   .enlace-web{
     display:inline-block;
     margin-top:20px;
@@ -145,6 +153,8 @@
     <audio id="audio" preload="metadata" controls></audio>
 
     <div id="aviso" class="aviso"></div>
+
+    <img class="plano" src="plano.jpg" alt="Plano del centro" onerror="this.remove()">
 
     <a class="enlace-web" href="https://ceipmanuelsiurot.es" target="_blank" rel="noopener">ceipmanuelsiurot.es</a>
 
